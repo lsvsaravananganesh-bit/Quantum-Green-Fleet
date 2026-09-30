@@ -1,0 +1,85 @@
+{
+  "best_model": "xgboost",
+  "training_date": "2026-09-30T09:42:20.745131",
+  "dataset_size": 3000,
+  "train_size": 2100,
+  "val_size": 450,
+  "test_size": 450,
+  "features": [
+    "engine_cc",
+    "weight_kg",
+    "vehicle_age",
+    "distance_km",
+    "avg_speed_kmh",
+    "idle_time_min",
+    "temperature_c",
+    "payload_kg",
+    "driving_duration_min",
+    "vehicle_type",
+    "fuel_type",
+    "road_type",
+    "traffic_condition"
+  ],
+  "models": {
+    "linear_regression": {
+      "val": {
+        "mae": 57.4093,
+        "rmse": 83.0182,
+        "r2": 0.8019,
+        "mape": 150.18
+      },
+      "test": {
+        "mae": 50.0865,
+        "rmse": 70.8716,
+        "r2": 0.8159,
+        "mape": 158.3
+      },
+      "is_selected": false
+    },
+    "xgboost": {
+      "val": {
+        "mae": 14.993,
+        "rmse": 27.0861,
+        "r2": 0.9789,
+        "mape": 11.43
+      },
+      "test": {
+        "mae": 15.3884,
+        "rmse": 28.1,
+        "r2": 0.9711,
+        "mape": 14.02
+      },
+      "is_selected": true
+    },
+    "random_forest": {
+      "val": {
+        "mae": 30.4145,
+        "rmse": 52.641,
+        "r2": 0.9203,
+        "mape": 34.85
+      },
+      "test": {
+        "mae": 29.4851,
+        "rmse": 52.9916,
+        "r2": 0.8971,
+        "mape": 40.52
+      },
+      "is_selected": false
+    },
+    "gradient_boosting": {
+      "val": {
+        "mae": 18.6939,
+        "rmse": 31.8882,
+        "r2": 0.9708,
+        "mape": 18.18
+      },
+      "test": {
+        "mae": 17.8829,
+        "rmse": 31.2722,
+        "r2": 0.9642,
+        "mape": 21.75
+      },
+      "is_selected": false
+    }
+  }
+}
