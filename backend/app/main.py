@@ -4,12 +4,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from app.core.config import settings
-from app.core.database import engine, Base
+from app.core.database import engine, Base, SessionLocal
+from app.core.security import get_password_hash
 from app.models import user, vehicle, driver, trip, fuel, optimization, prediction
+from app.models.user import User
 from app.api import (
     auth, dashboard, vehicles, drivers, trips,
     prediction as pred_api, optimization as opt_api, alerts,
@@ -18,10 +19,35 @@ from app.api import (
 from app.ml.predictor import init_predictor
 
 
+def ensure_demo_user():
+    db = SessionLocal()
+    try:
+        demo_user = db.query(User).filter(User.email == "admin@fleet.com").first()
+        if demo_user is None:
+            db.add(
+                User(
+                    email="admin@fleet.com",
+                    password_hash=get_password_hash("admin123"),
+                    full_name="Fleet Administrator",
+                    role="admin",
+                    is_active=True,
+                )
+            )
+        else:
+            demo_user.password_hash = get_password_hash("admin123")
+            demo_user.full_name = demo_user.full_name or "Fleet Administrator"
+            demo_user.role = "admin"
+            demo_user.is_active = True
+        db.commit()
+    finally:
+        db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("[START] Starting Quantum Green Fleet API...")
     Base.metadata.create_all(bind=engine)
+    ensure_demo_user()
     print("[OK] Database tables ready")
 
     models_dir = os.path.abspath(
@@ -29,7 +55,6 @@ async def lifespan(app: FastAPI):
     )
     init_predictor(models_dir)
     yield
-    # Shutdown
     print("Shutting down...")
 
 
